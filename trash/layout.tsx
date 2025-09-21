@@ -1,14 +1,12 @@
-// src/app/layout.tsx
+// trash/layout.tsx
 import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/contexts/auth-context"
-import { Toaster } from "@/components/ui/sonner"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
-import { Header } from "@/components/header"
+import { MainNavigation } from "@/components/navigation/main-navigation"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -28,23 +26,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <AuthProvider>
-            <SidebarProvider>
-              <AppSidebar />
-
-              <SidebarInset>
-                <Header/>
-                <main className="flex-1 overflow-y-auto">
-                  <div className="p-6">{children}</div>
-                </main>
-              </SidebarInset>
-
-            </SidebarProvider>
-            {/* <div className="flex h-screen">
+            <div className="flex h-screen">
               <aside className="w-64 border-r bg-background">
                 <MainNavigation />
               </aside>
               <main className="flex-1 overflow-auto">{children}</main>
-            </div> */}
+            </div>
             <Toaster />
           </AuthProvider>
         </ThemeProvider>
