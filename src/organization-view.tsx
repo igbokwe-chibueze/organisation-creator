@@ -170,10 +170,11 @@ export default function OrganizationView() {
       })
       setTimeout(() => setLinkCopied(false), 2000)
     } catch (error) {
+      console.error("Error:", error)
       toast({
         title: "Copy Failed",
         description: "Failed to copy link to clipboard.",
-        variant: "destructive",
+        //variant: "destructive",
       })
     }
   }
@@ -188,7 +189,7 @@ export default function OrganizationView() {
       toast({
         title: "No Email Addresses",
         description: "Please enter at least one email address.",
-        variant: "destructive",
+        //variant: "destructive",
       })
       return
     }
@@ -289,7 +290,7 @@ export default function OrganizationView() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">

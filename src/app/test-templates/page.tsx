@@ -118,6 +118,7 @@ export default function TestTemplatesPage() {
         })
       }
     } catch (error) {
+      console.error("Template application failed:", error)
       toast("Error",{
         description: "Failed to apply template",
         //variant: "destructive",
@@ -160,6 +161,7 @@ export default function TestTemplatesPage() {
         })
       }
     } catch (error) {
+      console.error("Template removal failed:", error)
       toast("Error",{
         description: "Failed to remove template",
         //variant: "destructive",

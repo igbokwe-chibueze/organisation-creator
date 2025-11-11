@@ -15,7 +15,7 @@ export const Header = () => {
   return (
     <>
         {/* Top navigation */}
-        <header className="bg-white shadow-sm border-b">
+        <header className="shadow-sm border-b">
             <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center">
                     <SidebarTrigger/>
