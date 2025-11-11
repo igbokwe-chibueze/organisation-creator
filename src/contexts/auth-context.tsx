@@ -11,6 +11,7 @@ import {
   type PermissionTemplate,
   RBACService,
   SYSTEM_PERMISSION_TEMPLATES,
+  OrganizationMembership,
 } from "@/lib/rbac"
 
 interface AuthContextType {
@@ -142,7 +143,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(parsedUser)
 
           // Safely set organization ID
-          if (savedOrgId && parsedUser.organizationMemberships?.some((m: any) => m.organizationId === savedOrgId)) {
+          // if (savedOrgId && parsedUser.organizationMemberships?.some((m: any) => m.organizationId === savedOrgId)) {
+          if (savedOrgId && parsedUser.organizationMemberships?.some((m: OrganizationMembership) => m.organizationId === savedOrgId)) {
             setCurrentOrganizationId(savedOrgId)
           } else if (parsedUser.organizationMemberships && parsedUser.organizationMemberships.length > 0) {
             setCurrentOrganizationId(parsedUser.organizationMemberships[0].organizationId)
@@ -191,7 +193,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false)
   }, [])
 
-  const login = async (email: string, password: string) => {
+  // const login = async (email: string, _password: string) => {
+  const login = async (email: string) => {
     setIsLoading(true)
     try {
       // Simulate API call

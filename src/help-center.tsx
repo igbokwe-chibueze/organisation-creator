@@ -154,6 +154,7 @@ export function HelpCenter() {
   }
 
   const handleFeedback = (faqId: string, helpful: boolean) => {
+    console.log(faqId, helpful)
     toast("Thank you for your feedback",{
      description: "Your feedback helps us improve our documentation.",
     })
