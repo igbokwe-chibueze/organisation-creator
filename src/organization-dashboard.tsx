@@ -138,8 +138,12 @@ const mockActivities: RecentActivity[] = [
 
 export default function OrganizationDashboard() {
   const router = useRouter()
-  const [organizations, setOrganizations] = useState<Organization[]>(mockOrganizations)
-  const [activities, setActivities] = useState<RecentActivity[]>(mockActivities)
+  //const [organizations, setOrganizations] = useState<Organization[]>(mockOrganizations)
+  const organizations = mockOrganizations
+
+  //const [activities, setActivities] = useState<RecentActivity[]>(mockActivities)
+  const activities = mockActivities
+
   const [searchTerm, setSearchTerm] = useState("")
   const [filterStatus, setFilterStatus] = useState<string>("all")
 
@@ -421,7 +425,7 @@ export default function OrganizationDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {["Technology", "Healthcare", "Education", "Finance"].map((industry, index) => {
+                    {["Technology", "Healthcare", "Education", "Finance"].map((industry) => {
                       const count = organizations.filter((org) => org.industry === industry).length
                       const percentage = (count / organizations.length) * 100
                       return (
