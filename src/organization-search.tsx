@@ -55,6 +55,9 @@ interface SearchFilters {
   isPublic: boolean | null
 }
 
+type FilterValue<K extends keyof SearchFilters> = SearchFilters[K]
+
+
 const mockOrganizations: Organization[] = [
   {
     id: "1",
@@ -166,7 +169,8 @@ const countries = ["United States", "Canada", "United Kingdom", "Germany", "Fran
 export default function OrganizationSearch() {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
-  const [organizations, setOrganizations] = useState<Organization[]>(mockOrganizations)
+  const [organizations] = useState<Organization[]>(mockOrganizations)
+
   const [filteredOrganizations, setFilteredOrganizations] = useState<Organization[]>(mockOrganizations)
   const [showFilters, setShowFilters] = useState(false)
   const [filters, setFilters] = useState<SearchFilters>({
@@ -232,7 +236,7 @@ export default function OrganizationSearch() {
     router.push("/dashboard")
   }
 
-  const handleFilterChange = (filterType: keyof SearchFilters, value: any) => {
+  const handleFilterChange = <K extends keyof SearchFilters>(filterType: K, value: FilterValue<K>) => {
     setFilters((prev) => ({
       ...prev,
       [filterType]: value,
@@ -432,7 +436,9 @@ export default function OrganizationSearch() {
                   <div className="mt-2">
                     <Slider
                       value={filters.completionRange}
-                      onValueChange={(value) => handleFilterChange("completionRange", value)}
+                      onValueChange={(value) =>
+                        handleFilterChange("completionRange", value as [number, number])
+                      }
                       max={100}
                       min={0}
                       step={5}
@@ -496,7 +502,7 @@ export default function OrganizationSearch() {
                 <h2 className="text-xl font-semibold">
                   {filteredOrganizations.length} organization{filteredOrganizations.length !== 1 ? "s" : ""} found
                 </h2>
-                {searchTerm && <p className="text-sm text-gray-600">Results for "{searchTerm}"</p>}
+                {searchTerm && <p className="text-sm text-gray-600">Results for &quot;{searchTerm}&quot;</p>}
               </div>
               <Select defaultValue="relevance">
                 <SelectTrigger className="w-48">
@@ -603,7 +609,7 @@ export default function OrganizationSearch() {
                     <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No organizations found</h3>
                     <p className="text-gray-600 mb-4">
-                      Try adjusting your search terms or filters to find what you're looking for.
+                      Try adjusting your search terms or filters to find what you&apos;re looking for.
                     </p>
                     <Button variant="outline" onClick={clearFilters}>
                       Clear All Filters
