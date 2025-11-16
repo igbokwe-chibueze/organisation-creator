@@ -3,7 +3,8 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect, type DragEvent, type ChangeEvent } from "react"
+import { useState, useRef, useEffect, useCallback, type DragEvent, type ChangeEvent } from "react"
+
 import {
   Upload,
   X,
@@ -31,6 +32,17 @@ import { Progress } from "@/components/ui/progress"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+
+interface FormErrors {
+  name?: string
+  description?: string
+  email?: string
+  phone?: string
+  country?: string
+  address?: string
+  logo?: string
+}
+
 
 interface FormData {
   name: string
@@ -78,7 +90,9 @@ export default function OrganizationForm() {
 
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
-  const [errors, setErrors] = useState<Partial<FormData>>({})
+  //const [errors, setErrors] = useState<Partial<FormData>>({})
+  const [errors, setErrors] = useState<FormErrors>({})
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccessActions, setShowSuccessActions] = useState(false)
   const router = useRouter()
@@ -95,6 +109,17 @@ export default function OrganizationForm() {
     const fields = ["name", "description", "email", "phone", "country", "address", "logo"] as const
     return fields.filter((field) => isFieldValid(field)).length
   }
+
+  const handleRemoveLogo = useCallback(() => {
+    setFormData((prev) => ({ ...prev, logo: null }))
+    if (logoPreview) {
+      URL.revokeObjectURL(logoPreview)
+      setLogoPreview(null)
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }, [logoPreview])
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -131,7 +156,7 @@ export default function OrganizationForm() {
 
     document.addEventListener("keydown", handleKeyDown)
     return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [isSubmitting])
+  }, [isSubmitting, handleRemoveLogo])
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -146,7 +171,8 @@ export default function OrganizationForm() {
     if (file && file.type.startsWith("image/")) {
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        setErrors((prev) => ({ ...prev, logo: "File size must be less than 5MB" as any }))
+        setErrors((prev) => ({ ...prev, logo: "File size must be less than 5MB" }))
+
         return
       }
 
@@ -155,7 +181,7 @@ export default function OrganizationForm() {
       setLogoPreview(url)
       setErrors((prev) => ({ ...prev, logo: undefined }))
     } else {
-      setErrors((prev) => ({ ...prev, logo: "Please select a valid image file" as any }))
+      setErrors((prev) => ({ ...prev, logo: "Please select a valid image file" }))
     }
   }
 
@@ -186,23 +212,12 @@ export default function OrganizationForm() {
     }
   }
 
-  const handleRemoveLogo = () => {
-    setFormData((prev) => ({ ...prev, logo: null }))
-    if (logoPreview) {
-      URL.revokeObjectURL(logoPreview)
-      setLogoPreview(null)
-    }
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
-    }
-  }
-
   const handleLogoClick = () => {
     fileInputRef.current?.click()
   }
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<FormData> = {}
+    const newErrors: Partial<FormErrors> = {}
 
     if (!formData.name.trim()) newErrors.name = "Organization name is required"
     if (!formData.description.trim()) newErrors.description = "Description is required"
