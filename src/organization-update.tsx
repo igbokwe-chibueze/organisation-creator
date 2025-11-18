@@ -81,18 +81,18 @@ interface OrganizationData {
   newsletterOptIn: boolean
 }
 
-const countries = [
-  "United States",
-  "Canada",
-  "United Kingdom",
-  "Germany",
-  "France",
-  "Australia",
-  "Japan",
-  "Brazil",
-  "India",
-  "Other",
-]
+// const countries = [
+//   "United States",
+//   "Canada",
+//   "United Kingdom",
+//   "Germany",
+//   "France",
+//   "Australia",
+//   "Japan",
+//   "Brazil",
+//   "India",
+//   "Other",
+// ]
 
 const organizationTypes = [
   "Corporation",
@@ -165,13 +165,20 @@ const availableLanguages = [
   "Other",
 ]
 
+type FormErrors = {
+  [K in keyof OrganizationData]?: string;
+};
+
+
 export default function OrganizationUpdate() {
   const router = useRouter()
   const [formData, setFormData] = useState<OrganizationData | null>(null)
   const [originalData, setOriginalData] = useState<OrganizationData | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
-  const [errors, setErrors] = useState<Partial<OrganizationData>>({})
+  //const [errors, setErrors] = useState<Partial<OrganizationData>>({})
+  const [errors, setErrors] = useState<FormErrors>({})
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [modifiedFields, setModifiedFields] = useState<Set<string>>(new Set())
   const { toast } = useToast()
@@ -269,6 +276,60 @@ export default function OrganizationUpdate() {
     setModifiedFields(modified)
   }, [formData, originalData])
 
+  const getModifiedData = (): Partial<OrganizationData> => {
+    if (!formData) return {}
+
+    const modified: Partial<OrganizationData> = {}
+
+    modifiedFields.forEach((field) => {
+      switch (field) {
+        case "name":
+        case "description":
+        case "email":
+        case "phone":
+        case "country":
+        case "address":
+        case "website":
+        case "foundedYear":
+        case "organizationType":
+        case "industry":
+        case "employeeCount":
+        case "annualRevenue":
+        case "alternateEmail":
+        case "fax":
+        case "linkedinUrl":
+        case "twitterUrl":
+        case "facebookUrl":
+        case "taxId":
+        case "registrationNumber":
+        case "businessLicense":
+        case "operatingHours":
+        case "timeZone":
+        case "services":
+          modified[field] = formData[field] as string
+          break
+
+        case "logo":
+          modified[field] = formData.logo ?? undefined
+          break
+
+        case "languages":
+          modified[field] = formData.languages
+          break
+
+        case "isPublic":
+        case "allowContact":
+        case "showRevenue":
+        case "newsletterOptIn":
+          modified[field] = formData[field] as boolean
+          break
+      }
+    })
+
+    return modified
+  }
+
+
   const handleInputChange = (field: keyof OrganizationData, value: string | boolean | string[]) => {
     if (!formData) return
     setFormData((prev) => (prev ? { ...prev, [field]: value } : null))
@@ -292,7 +353,7 @@ export default function OrganizationUpdate() {
   const handleLogoSelect = (file: File) => {
     if (file && file.type.startsWith("image/")) {
       if (file.size > 5 * 1024 * 1024) {
-        setErrors((prev) => ({ ...prev, logo: "File size must be less than 5MB" as any }))
+        setErrors((prev) => ({ ...prev, logo: "File size must be less than 5MB" }))
         return
       }
 
@@ -301,7 +362,7 @@ export default function OrganizationUpdate() {
       setLogoPreview(url)
       setErrors((prev) => ({ ...prev, logo: undefined }))
     } else {
-      setErrors((prev) => ({ ...prev, logo: "Please select a valid image file" as any }))
+      setErrors((prev) => ({ ...prev, logo: "Please select a valid image file" }))
     }
   }
 
@@ -363,6 +424,7 @@ export default function OrganizationUpdate() {
           setLogoPreview(null)
         }
       } catch (error) {
+        console.error(error);
         setLogoPreview(null)
       }
     }
@@ -373,16 +435,6 @@ export default function OrganizationUpdate() {
     })
   }
 
-  const getModifiedData = () => {
-    if (!formData) return {}
-    const modified: Partial<OrganizationData> = {}
-    modifiedFields.forEach((field) => {
-      const typedField = field as keyof OrganizationData
-      modified[typedField] = formData[typedField] as any
-    })
-    return modified
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -390,7 +442,7 @@ export default function OrganizationUpdate() {
       toast({
         title: "No Changes Detected",
         description: "Please modify at least one field before saving.",
-        variant: "destructive",
+        //variant: "destructive",
       })
       return
     }
@@ -420,7 +472,7 @@ export default function OrganizationUpdate() {
       toast({
         title: "Update Failed",
         description: "There was an error updating your organization. Please try again.",
-        variant: "destructive",
+        //variant: "destructive",
         duration: 5000,
       })
       console.error("Update error:", error)
