@@ -137,7 +137,7 @@ const mockOrganization: Organization = {
 export default function OrganizationView() {
   const router = useRouter()
   const { toast } = useToast()
-  const [organization, setOrganization] = useState<Organization>(mockOrganization)
+  const [organization] = useState<Organization>(mockOrganization)
   const [shareLink, setShareLink] = useState("")
   const [linkCopied, setLinkCopied] = useState(false)
   const [emailInvites, setEmailInvites] = useState("")
