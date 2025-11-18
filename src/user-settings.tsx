@@ -35,6 +35,7 @@ import {
 
 export function UserSettings() {
   const { user } = useAuth()
+  const { currentOrganizationId } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   const [profileData, setProfileData] = useState({
     firstName: user?.name.split(" ")[0] || "John",
@@ -111,7 +112,7 @@ export function UserSettings() {
             <Palette className="h-4 w-4" />
             Preferences
           </TabsTrigger>
-          <PermissionGuard permission="members.manage">
+          <PermissionGuard permission="org.members.manage">
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Users
@@ -514,9 +515,9 @@ export function UserSettings() {
         </TabsContent>
 
         {/* User Management */}
-        <PermissionGuard permission="members.manage">
+        <PermissionGuard permission="org.members.manage">
           <TabsContent value="users" className="space-y-6">
-            <UserManagement />
+            <UserManagement organizationId={currentOrganizationId ?? ""} />
           </TabsContent>
         </PermissionGuard>
 
