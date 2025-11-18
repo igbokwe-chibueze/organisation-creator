@@ -20,8 +20,14 @@ import {
   Building2,
   Layout,
 } from "lucide-react"
+import { Permission } from "@/lib/rbac"
 
-const navigationItems = [
+const navigationItems : {
+  title: string
+  href: string
+  icon: typeof Home
+  permissions: Permission[]
+}[] = [
   {
     title: "Home",
     href: "/",
